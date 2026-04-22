@@ -1,8 +1,9 @@
 ﻿@model IEnumerable<Prog7311_Part2.Models.ServiceRequest>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Service Requests";
 }
+
 <div class="card bg-light mb-4 shadow-sm border-left-primary">
     <div class="card-body">
         <form asp-action="Index" method="get" class="row g-3 align-items-end">
@@ -17,55 +18,64 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                <button type="submit" class="btn btn-primary btn-block w-100">Apply Filters</button>
             </div>
         </form>
     </div>
 </div>
-<h1>Index</h1>
+
+<h1>Service Requests</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success shadow-sm">
+        <i class="fas fa-plus"></i> Create New
+    </a>
 </p>
-<table class="table">
-    <thead>
+
+<table class="table table-hover align-middle">
+    <thead class="thead-dark">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-           @*  <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.Cost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Contract)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>Status</th>
+            <th>@Html.DisplayNameFor(model => model.Cost)</th>
+            <th>Contract ID</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            @* <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td> *@
-            <td>
-                @Html.DisplayFor(modelItem => item.Cost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contract.ContractId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ServiceRequestId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ServiceRequestId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ServiceRequestId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="font-weight-bold">@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>
+                    @{
+                        // Determine high-visibility color based on status
+                        var statusString = item.Status.ToString();
+                        var badgeClass = statusString switch
+                        {
+                            "New" => "bg-primary text-white",      // Bright Blue
+                            "Pending" => "bg-warning text-dark",   // High-contrast Yellow
+                            "Resolved" => "bg-success text-white", // Success Green
+                            _ => "bg-secondary text-white"         // Neutral Grey
+                        };
+                    }
+                    <span class="badge rounded-pill @badgeClass shadow-sm"
+                          style="font-size: 0.85rem; padding: 0.6em 1.2em; min-width: 80px; display: inline-block; text-align: center;">
+                        @item.Status
+                    </span>
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Cost)</td>
+                <td>
+                    <span class="text-muted small">#</span>@item.Contract?.ContractId
+                </td>
+                <td>
+                    <div class="btn-group shadow-sm" role="group">
+                        <a asp-action="Edit" asp-route-id="@item.ServiceRequestId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.ServiceRequestId" class="btn btn-sm btn-outline-info">Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.ServiceRequestId" class="btn btn-sm btn-outline-danger">Delete</a>
+                    </div>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

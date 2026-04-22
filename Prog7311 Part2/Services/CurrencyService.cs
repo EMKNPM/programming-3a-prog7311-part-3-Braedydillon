@@ -20,7 +20,6 @@ namespace Prog7311_Part2.Services
             try
             {
                 // Replace this with your actual API key from ExchangeRate-API
-                string apiKey = "YOUR_API_KEY_HERE"; 
                 string url = $"https://v6.exchangerate-api.com/v6/43ee498784381b01875dbe0e/pair/{fromCurrency}/ZAR/{amount}";
 
                 var response = await _httpClient.GetFromJsonAsync<ExchangeRateResponse>(url);

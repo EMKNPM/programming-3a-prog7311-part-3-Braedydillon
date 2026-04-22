@@ -2,7 +2,57 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="jumbotron jumbotron-fluid bg-primary text-white text-center rounded shadow-sm">
+    <div class="container py-4">
+        <h1 class="display-4 font-weight-bold">Management System</h1>
+        <p class="lead">Centralized control for Clients, Contracts, and Service Requests.</p>
+        <hr class="my-4 border-light" style="width: 50%;">
+    </div>
 </div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center d-flex flex-column">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title font-weight-bold">Clients</h5>
+                    <p class="card-text text-muted">Manage client profiles, contact information, and regional locations.</p>
+                    <a asp-controller="Clients" asp-action="Index" class="btn btn-primary mt-auto">View Directory</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center d-flex flex-column">
+                    <div class="mb-3">
+                        <i class="fas fa-file-contract fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title font-weight-bold">Contracts</h5>
+                    <p class="card-text text-muted">Track SLA dates, document uploads, and monitor contract statuses.</p>
+                    <a asp-controller="Contracts" asp-action="Index" class="btn btn-primary mt-auto">Manage Contracts</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center d-flex flex-column">
+                    <div class="mb-3">
+                        <i class="fas fa-tools fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="card-title font-weight-bold">Service Requests</h5>
+                    <p class="card-text text-muted">Log support calls, calculate costs with live API, and check contract validity.</p>
+                    <a asp-controller="ServiceRequests" asp-action="Index" class="btn btn-primary mt-auto">Process Requests</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="mt-5 text-center text-muted">
+    <p> Built by Braedy Dillon</p>
+</footer>

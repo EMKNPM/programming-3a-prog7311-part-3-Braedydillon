@@ -9,14 +9,15 @@ namespace Prog7311_Part2.Controllers
     public class ContractsController : Controller
     {
         private readonly IContractRepository _repo;
+        private readonly IClientRepository _clientRepo; // Added this
         private readonly IWebHostEnvironment _hostEnvironment;
-        private readonly ClientContextDatabase _context; // Keep ONLY for SelectLists
 
-        public ContractsController(IContractRepository repo, IWebHostEnvironment hostEnvironment, ClientContextDatabase context)
+        // DB context is now GONE from the constructor
+        public ContractsController(IContractRepository repo, IClientRepository clientRepo, IWebHostEnvironment hostEnvironment)
         {
             _repo = repo;
+            _clientRepo = clientRepo;
             _hostEnvironment = hostEnvironment;
-            _context = context;
         }
 
         // GET: Contracts
@@ -30,29 +31,14 @@ namespace Prog7311_Part2.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-
             var contract = await _repo.GetByIdAsync(id.Value);
-            if (contract == null) return NotFound();
-
-            return View(contract);
+            return contract == null ? NotFound() : View(contract);
         }
 
         // GET: Contracts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "Name");
-
-            // This converts your Enum into a list the dropdown can actually read
-            var statusList = Enum.GetValues(typeof(ContractStatus))
-                                 .Cast<ContractStatus>()
-                                 .Select(s => new SelectListItem
-                                 {
-                                     Text = s.ToString(),
-                                     Value = ((int)s).ToString()
-                                 }).ToList();
-
-            ViewBag.StatusOptions = statusList;
-
+            await PopulateDropdowns();
             return View();
         }
 
@@ -72,7 +58,7 @@ namespace Prog7311_Part2.Controllers
                 contract.DocumentPath = fileName;
             }
 
-            ModelState.Remove("Client"); // Prevents validation failure on nav property
+            ModelState.Remove("Client");
 
             if (ModelState.IsValid)
             {
@@ -80,7 +66,7 @@ namespace Prog7311_Part2.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "Name", contract.ClientId);
+            await PopulateDropdowns(contract.ClientId);
             return View(contract);
         }
 
@@ -88,22 +74,10 @@ namespace Prog7311_Part2.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-
             var contract = await _repo.GetByIdAsync(id.Value);
             if (contract == null) return NotFound();
 
-            // This converts your Enum into a list the dropdown can actually read
-            var statusList = Enum.GetValues(typeof(ContractStatus))
-                                 .Cast<ContractStatus>()
-                                 .Select(s => new SelectListItem
-                                 {
-                                     Text = s.ToString(),
-                                     Value = ((int)s).ToString()
-                                 }).ToList();
-
-            ViewBag.StatusOptions = statusList;
-
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "Name", contract.ClientId);
+            await PopulateDropdowns(contract.ClientId);
             return View(contract);
         }
 
@@ -128,22 +102,35 @@ namespace Prog7311_Part2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClientId"] = new SelectList(_context.Client, "ClientId", "Name", contract.ClientId);
+            await PopulateDropdowns(contract.ClientId);
             return View(contract);
+        }
+
+        // HELPER: No direct DB access, uses Client Repository
+        private async Task PopulateDropdowns(int? selectedId = null)
+        {
+            var clients = await _clientRepo.GetAllAsync();
+            ViewData["ClientId"] = new SelectList(clients, "ClientId", "Name", selectedId);
+
+            var statusList = Enum.GetValues(typeof(ContractStatus))
+                                 .Cast<ContractStatus>()
+                                 .Select(s => new SelectListItem
+                                 {
+                                     Text = s.ToString(),
+                                     Value = ((int)s).ToString()
+                                 }).ToList();
+
+            ViewBag.StatusOptions = statusList;
         }
 
         // GET: Contracts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-
             var contract = await _repo.GetByIdAsync(id.Value);
-            if (contract == null) return NotFound();
-
-            return View(contract);
+            return contract == null ? NotFound() : View(contract);
         }
 
-        // POST: Contracts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
