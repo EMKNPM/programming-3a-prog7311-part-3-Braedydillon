@@ -31,6 +31,9 @@ YouTube – https://youtu.be/9huwHaDUmwk
 
 <img width="1887" height="895" alt="Screenshot 2026-06-08 214658" src="https://github.com/user-attachments/assets/600e929a-41f5-4a6d-b0d0-cb4c47c283f2" />
 
+<img width="1243" height="624" alt="Screenshot 2026-06-08 211140" src="https://github.com/user-attachments/assets/60c1a8b0-f11b-43d0-802f-c1c426d2104d" />
+<img width="1919" height="951" alt="Screenshot 2026-06-08 214641" src="https://github.com/user-attachments/assets/0797c0ef-cf66-47eb-8d26-07ec3b0f9281" />
+<img width="1905" height="949" alt="Screenshot 2026-06-08 214716" src="https://github.com/user-attachments/assets/c1d474f7-e9ac-4537-ba82-0762ef3fa10e" />
 
 
 
