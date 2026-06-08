@@ -22,3 +22,9 @@ Containerization
 Docker ensures that consistency across Development, testing and production environments by packaging an application together with all its dependencies, libraries, settings, and runtime and that the software behaves consistently regardless of the underlying machine.
 This approach helps solve the common issues of it working on one machine and not another. This helps prevent developers from having to troubleshoot launch errors and allows them to just run and continue from where the last developer left off. Docker eliminates the inconsistencies by ensuring every environment runs in the exact same container image.
 In this project, Docker was used to containerise the MVC application, ASP.NET and the SQL Server database. Docker Compose was used to manage these services and create a link between all Docker's internal networks. This allows the containers to communicate reliably using a service name instead of machine-specific addresses. As a result, the application could be deployed constantly across deployment, testing and production environments while making sure the setup is easy and reduces errors across configurations.
+
+Links
+Git -
+https://github.com/EMKNPM/programming-3a-prog7311-part-3-Braedydillon 
+YouTube – https://youtu.be/9huwHaDUmwk 
+
