@@ -18,11 +18,25 @@ namespace APIConnectorCore.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetContracts()
+        public async Task<IActionResult> GetContracts(
+        DateOnly? startDate,
+        DateOnly? endDate,
+        ContractStatus? status)
         {
-            var contracts = await _context.Contract
+            var query = _context.Contract
                 .Include(c => c.Client)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (startDate.HasValue)
+                query = query.Where(c => c.StartDate >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(c => c.EndDate <= endDate.Value);
+
+            if (status.HasValue)
+                query = query.Where(c => c.Status == status.Value);
+
+            var contracts = await query.ToListAsync();
 
             return Ok(contracts);
         }

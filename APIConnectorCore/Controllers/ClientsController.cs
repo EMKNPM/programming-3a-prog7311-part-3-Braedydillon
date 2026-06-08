@@ -18,9 +18,20 @@ namespace APIConnectorCore.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetClients()
+        public async Task<IActionResult> GetClients(string? searchString)
         {
             var clients = await _repo.GetAllAsync();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                clients = clients
+                    .Where(c =>
+                        c.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                        c.ContactDetails.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                        c.Region.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+
             return Ok(clients);
         }
 
