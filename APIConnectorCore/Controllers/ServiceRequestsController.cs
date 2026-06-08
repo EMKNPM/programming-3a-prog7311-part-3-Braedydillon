@@ -1,20 +1,23 @@
 ﻿using APIConnectorCore.Models;
 using APIConnectorCore.Repositories;
-using Microsoft.AspNetCore.Authorization;
+using APIConnectorCore.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIConnectorCore.Controllers
 {
-   
     [ApiController]
     [Route("api/[controller]")]
     public class ServiceRequestsController : ControllerBase
     {
         private readonly IServiceRequestRepository _repo;
+        private readonly ICurrencyService _currencyService;
 
-        public ServiceRequestsController(IServiceRequestRepository repo)
+        public ServiceRequestsController(
+            IServiceRequestRepository repo,
+            ICurrencyService currencyService)
         {
             _repo = repo;
+            _currencyService = currencyService;
         }
 
         [HttpGet]
@@ -22,10 +25,9 @@ namespace APIConnectorCore.Controllers
             string? searchString,
             string? status)
         {
-            var requests =
-                await _repo.GetFilteredRequestsAsync(
-                    searchString,
-                    status);
+            var requests = await _repo.GetFilteredRequestsAsync(
+                searchString,
+                status);
 
             return Ok(requests.Select(r => new
             {
@@ -40,8 +42,7 @@ namespace APIConnectorCore.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetServiceRequest(int id)
         {
-            var request =
-                await _repo.GetByIdAsync(id);
+            var request = await _repo.GetByIdAsync(id);
 
             if (request == null)
                 return NotFound();
@@ -58,8 +59,13 @@ namespace APIConnectorCore.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateServiceRequest(
-            [FromBody] ServiceRequest request)
+            [FromBody] ServiceRequest request,
+            [FromQuery] string fromCurrency = "ZAR")
         {
+            request.Cost = await _currencyService.ConvertToZAR(
+                request.Cost,
+                fromCurrency);
+
             await _repo.AddAsync(request);
             await _repo.SaveChangesAsync();
 
@@ -79,16 +85,20 @@ namespace APIConnectorCore.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateServiceRequest(
             int id,
-            [FromBody] ServiceRequest request)
+            [FromBody] ServiceRequest request,
+            [FromQuery] string fromCurrency = "ZAR")
         {
             if (id != request.ServiceRequestId)
                 return BadRequest();
 
-            var existing =
-                await _repo.GetByIdAsync(id);
+            var existing = await _repo.GetByIdAsync(id);
 
             if (existing == null)
                 return NotFound();
+
+            request.Cost = await _currencyService.ConvertToZAR(
+                request.Cost,
+                fromCurrency);
 
             await _repo.UpdateAsync(request);
             await _repo.SaveChangesAsync();
@@ -99,8 +109,7 @@ namespace APIConnectorCore.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServiceRequest(int id)
         {
-            var existing =
-                await _repo.GetByIdAsync(id);
+            var existing = await _repo.GetByIdAsync(id);
 
             if (existing == null)
                 return NotFound();

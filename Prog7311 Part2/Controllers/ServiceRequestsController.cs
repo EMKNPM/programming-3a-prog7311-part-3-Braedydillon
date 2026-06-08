@@ -12,7 +12,7 @@ namespace Prog7311_Part2.Controllers
         public ServiceRequestsController(IHttpClientFactory factory)
         {
             _client = factory.CreateClient();
-            _client.BaseAddress = new Uri("http://apiconnectorcore:8080/");
+            _client = factory.CreateClient("ApiClient");
         }
 
         // GET: ServiceRequests
@@ -50,18 +50,20 @@ namespace Prog7311_Part2.Controllers
             return View();
         }
 
-        // POST: ServiceRequests/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            ServiceRequest serviceRequest,
-            string SourceCurrency)
+    ServiceRequest serviceRequest,
+    string SourceCurrency)
         {
+            if (string.IsNullOrWhiteSpace(SourceCurrency))
+                SourceCurrency = "ZAR";
+
             if (ModelState.IsValid)
             {
                 var response =
                     await _client.PostAsJsonAsync(
-                        "api/servicerequests",
+                        $"api/servicerequests?fromCurrency={SourceCurrency}",
                         serviceRequest);
 
                 if (response.IsSuccessStatusCode)
