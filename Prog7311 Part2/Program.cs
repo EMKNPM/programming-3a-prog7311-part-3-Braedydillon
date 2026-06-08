@@ -1,20 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Prog7311_Part2.Repositories;
-using Prog7311_Part2.Services;
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHttpClient<ICurrencyService, CurrencyService>(); 
-builder.Services.AddScoped<IContractRepository, ContractRepository>();
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IServiceRequestRepository, ServiceRequestRepository>();
-
-
-builder.Services.AddDbContext<ClientContextDatabase>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ClientContextDatabase") ?? throw new InvalidOperationException("Connection string 'ClientContextDatabase' not found.")));
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// MVC talks to API using HttpClient
+builder.Services.AddHttpClient("ApiClient", client =>
+{
+    client.BaseAddress = new Uri("http://apiconnectorcore:8080/");
+});
 
 var app = builder.Build();
 
@@ -22,12 +15,13 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
 
 app.UseRouting();
 

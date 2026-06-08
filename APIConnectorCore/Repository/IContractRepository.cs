@@ -1,6 +1,6 @@
-﻿using Prog7311_Part2.Models;
+﻿using APIConnectorCore.Models;
 
-namespace Prog7311_Part2.Repositories
+namespace APIConnectorCore.Repositories
 {
     public interface IContractRepository
     {

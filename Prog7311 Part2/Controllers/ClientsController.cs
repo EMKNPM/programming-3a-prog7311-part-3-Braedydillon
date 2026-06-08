@@ -1,97 +1,134 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Prog7311_Part2.Models;
-using Prog7311_Part2.Repositories; 
-using System.Threading.Tasks;
+using System.Net.Http.Json;
 
 namespace Prog7311_Part2.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly IClientRepository _repo; 
+        private readonly HttpClient _client;
 
-        public ClientsController(IClientRepository repo)
+        public ClientsController(IHttpClientFactory factory)
         {
-            _repo = repo;
+            _client = factory.CreateClient("ApiClient");
         }
+
+        // GET: Clients
         public async Task<IActionResult> Index(string searchString)
         {
-            // We use the search method from the repo. 
-            // If searchString is null, the repo logic returns all clients anyway.
-            var clients = await _repo.SearchClientsAsync(searchString);
+            var clients = await _client.GetFromJsonAsync<List<Client>>(
+                $"api/clients?searchString={searchString}");
+
             return View(clients);
         }
+
+        // GET: Clients/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var client = await _repo.GetByIdAsync(id.Value);
-            if (client == null) return NotFound();
+            var client = await _client.GetFromJsonAsync<Client>(
+                $"api/clients/{id}");
+
+            if (client == null)
+                return NotFound();
 
             return View(client);
         }
 
-        public IActionResult Create() => View();
+        // GET: Clients/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
 
+        // POST: Clients/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClientId,Name,ContactDetails,Region")] Client client)
+        public async Task<IActionResult> Create(
+            [Bind("ClientId,Name,ContactDetails,Region")]
+            Client client)
         {
             if (ModelState.IsValid)
             {
-                await _repo.AddAsync(client);
-                return RedirectToAction(nameof(Index));
+                var response =
+                    await _client.PostAsJsonAsync(
+                        "api/clients",
+                        client);
+
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
             }
+
             return View(client);
         }
 
+        // GET: Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var client = await _repo.GetByIdAsync(id.Value);
-            if (client == null) return NotFound();
+            var client =
+                await _client.GetFromJsonAsync<Client>(
+                    $"api/clients/{id}");
+
+            if (client == null)
+                return NotFound();
 
             return View(client);
         }
 
+        // POST: Clients/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClientId,Name,ContactDetails,Region")] Client client)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("ClientId,Name,ContactDetails,Region")]
+            Client client)
         {
-            if (id != client.ClientId) return NotFound();
+            if (id != client.ClientId)
+                return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    await _repo.UpdateAsync(client);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_repo.ClientExists(client.ClientId)) return NotFound();
-                    else throw;
-                }
-                return RedirectToAction(nameof(Index));
+                var response =
+                    await _client.PutAsJsonAsync(
+                        $"api/clients/{client.ClientId}",
+                        client);
+
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Index));
             }
+
             return View(client);
         }
 
+        // GET: Clients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var client = await _repo.GetByIdAsync(id.Value);
-            if (client == null) return NotFound();
+            var client =
+                await _client.GetFromJsonAsync<Client>(
+                    $"api/clients/{id}");
+
+            if (client == null)
+                return NotFound();
 
             return View(client);
         }
 
+        // POST: Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _repo.DeleteAsync(id);
+            await _client.DeleteAsync(
+                $"api/clients/{id}");
+
             return RedirectToAction(nameof(Index));
         }
     }

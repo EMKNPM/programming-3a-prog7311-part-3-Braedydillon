@@ -1,36 +1,28 @@
-﻿using Moq;
-using Xunit;
-using Prog7311_Part2.Controllers;
-using Prog7311_Part2.Repositories;
-using Prog7311_Part2.Models;
-using Prog7311_Part2.Services;
+﻿using Xunit;
+using Moq;
 using Microsoft.AspNetCore.Mvc;
+using APIConnectorCore.Controllers;
+using APIConnectorCore.Models;
+using APIConnectorCore.Repositories;
 
 namespace Prog7311_UnitTests
 {
     public class ServiceRequestTests
     {
         [Fact]
-        public async Task Create_Fails_When_ContractIsBlocked()
+        public async Task GetServiceRequest_ReturnsNotFound_WhenRequestDoesNotExist()
         {
-            // --- ARRANGE ---
             var mockRepo = new Mock<IServiceRequestRepository>();
-            var mockContractRepo = new Mock<IContractRepository>();
-            var mockCurrency = new Mock<ICurrencyService>();
 
-            // Simulate the business rule: Contract 99 is BLOCKED (Expired)
-            mockRepo.Setup(repo => repo.IsContractBlocked(99)).ReturnsAsync(true);
+            mockRepo
+                .Setup(r => r.GetByIdAsync(99))
+                .ReturnsAsync((ServiceRequest?)null);
 
-            var controller = new ServiceRequestsController(mockRepo.Object, mockContractRepo.Object, mockCurrency.Object);
-            var invalidRequest = new ServiceRequest { ContractId = 99, Description = "Fix Server" };
+            var controller = new ServiceRequestsController(mockRepo.Object);
 
-            // --- ACT ---
-            var result = await controller.Create(invalidRequest, "USD");
+            var result = await controller.GetServiceRequest(99);
 
-            // --- ASSERT ---
-            // Verify it returns the View (doesn't redirect) and adds a ModelState error
-            var viewResult = Assert.IsType<ViewResult>(result);
-            Assert.False(controller.ModelState.IsValid);
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }

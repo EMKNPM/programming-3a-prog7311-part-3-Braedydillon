@@ -1,7 +1,7 @@
 ﻿using Xunit;
 using Microsoft.AspNetCore.Http;
-using System.IO;
 using Moq;
+using System.IO;
 
 namespace Prog7311_UnitTests
 {
@@ -13,18 +13,13 @@ namespace Prog7311_UnitTests
         [InlineData("picture.png", false)]
         public void IsFileValid_ShouldOnlyAllowPdf(string fileName, bool expectedResult)
         {
-            // --- ARRANGE ---
-            // Fake an IFormFile
             var fileMock = new Mock<IFormFile>();
-            fileMock.Setup(_ => _.FileName).Returns(fileName);
+            fileMock.Setup(f => f.FileName).Returns(fileName);
 
-            // Logic: Check extension
             var extension = Path.GetExtension(fileMock.Object.FileName).ToLower();
 
-            // --- ACT ---
-            bool isValid = (extension == ".pdf");
+            bool isValid = extension == ".pdf";
 
-            // --- ASSERT ---
             Assert.Equal(expectedResult, isValid);
         }
     }

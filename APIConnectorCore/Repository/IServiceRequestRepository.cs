@@ -1,4 +1,4 @@
-﻿using Prog7311_Part2.Models;
+﻿using APIConnectorCore.Models;
 
 public interface IServiceRequestRepository
 {

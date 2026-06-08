@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Prog7311_Part2.Models;
+using APIConnectorCore.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Prog7311_Part2.Repositories
+namespace APIConnectorCore.Repositories
 {
     public class ClientRepository : IClientRepository
     {

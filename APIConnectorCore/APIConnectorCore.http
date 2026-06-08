@@ -1,0 +1,6 @@
+@APIConnectorCore_HostAddress = http://localhost:8080
+
+GET {{APIConnectorCore_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

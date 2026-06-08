@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Prog7311 Part2\Prog7311 Part2.csproj" />
+    <ProjectReference Include="..\APIConnectorCore\APIConnectorCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

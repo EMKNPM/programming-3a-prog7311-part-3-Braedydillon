@@ -1,4 +1,4 @@
-﻿namespace Prog7311_Part2.Services
+﻿namespace APIConnectorCore.Services
 
 {
     public interface ICurrencyService

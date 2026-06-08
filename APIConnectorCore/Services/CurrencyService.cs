@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 
-namespace Prog7311_Part2.Services
+namespace APIConnectorCore.Services
 {
     // This implements your ICurrencyService interface
     public class CurrencyService : ICurrencyService
@@ -20,7 +20,7 @@ namespace Prog7311_Part2.Services
             try
             {
                 // Replace this with your actual API key from ExchangeRate-API
-                string url = $"https://v6.exchangerate-api.com/v6/43ee498784381b01875dbe0e/pair/{fromCurrency}/ZAR/{amount}";
+                string url = $"https://v6.exchangerate-api.com/v6/fdc7251a4747cac4969b7ac5/pair/{fromCurrency}/ZAR/{amount}";
 
                 var response = await _httpClient.GetFromJsonAsync<ExchangeRateResponse>(url);
 
